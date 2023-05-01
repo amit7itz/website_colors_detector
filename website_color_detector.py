@@ -28,11 +28,10 @@ def get_website_colors_from_image(image: PIL.PngImagePlugin.PngImageFile) -> typ
     common_colors = c.most_common()[:5]
     return [color for color, _ in common_colors]
 
-if __name__ == "__main__":
-    url = "https://beerandbeyond.com/"
+def get_image_from_url(url: str) -> PIL.PngImagePlugin.PngImageFile:
     if not url.startswith("http"):
         url = "https://" + url
-    # Set up the webdriver
+    
     driver = webdriver.Chrome()
     try:
         driver.maximize_window()
@@ -42,7 +41,12 @@ if __name__ == "__main__":
     finally:
         driver.quit()
 
-    image: PIL.PngImagePlugin.PngImageFile = Image.open(io.BytesIO(screenshot_bytes))
+    return Image.open(io.BytesIO(screenshot_bytes))
+
+if __name__ == "__main__":
+    url = "https://beerandbeyond.com/"
+    
+    image = get_image_from_url(url)
     colors = get_website_colors_from_image(image)
 
     for color in colors:
