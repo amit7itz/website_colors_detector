@@ -2,6 +2,7 @@ from PIL import Image
 from collections import Counter
 import glob
 from selenium import webdriver
+from selenium.webdriver import ChromeOptions
 import io
 import PIL.PngImagePlugin
 import typing
@@ -12,6 +13,7 @@ SORT_RESULTS_BY_VIBRANTNESS = True
 MINIMAL_VIBRANTNESS = 60
 MINIMAL_RESULT_COLORS_DISTANCE = 20
 NUM_OF_MOST_COMMON_COLORS = 5
+RUN_BROWSER_HEADLESS = True
 
 def rgb2hex(r,g,b):
     return "#{:02x}{:02x}{:02x}".format(r,g,b)
@@ -56,7 +58,10 @@ def get_image_from_url(url: str) -> PIL.PngImagePlugin.PngImageFile:
     if not url.startswith("http"):
         url = "https://" + url
     
-    driver = webdriver.Chrome()
+    options = ChromeOptions()
+    if RUN_BROWSER_HEADLESS:
+        options.add_argument("--headless=new")
+    driver = webdriver.Chrome(options=options)
     try:
         driver.maximize_window()
         driver.get(url)
