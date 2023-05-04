@@ -8,14 +8,22 @@ import typing
 import time
 import numpy
 
+SORT_RESULTS_BY_VIBRANTNESS = True
+MINIMAL_VIBRANTNESS = 60
+MINIMAL_RESULT_COLORS_DISTANCE = 20
+NUM_OF_MOST_COMMON_COLORS = 5
+
 def rgb2hex(r,g,b):
     return "#{:02x}{:02x}{:02x}".format(r,g,b)
 
 def hex2rgb(hexcode):
     return int(hexcode[-6:-4], 16), int(hexcode[-4:-2], 16), int(hexcode[-2:], 16)
 
-def is_vibrant(pixel):
-    return (max(pixel) - min(pixel)) > 60
+def rgb_vibrantness(rgb: typing.Tuple[int]):
+    return (max(rgb) - min(rgb))
+
+def is_vibrant(rgb: typing.Tuple[int]):
+    return rgb_vibrantness(rgb) > MINIMAL_VIBRANTNESS
 
 def colors_distance(color1: typing.Tuple[int], color2: typing.Tuple[int]) -> float:
     p1 = numpy.array(color1)
@@ -25,7 +33,7 @@ def colors_distance(color1: typing.Tuple[int], color2: typing.Tuple[int]) -> flo
 def remove_similar_colors(colors: typing.List[typing.Tuple[int]]):
     unique_colors = []
     for color in colors:
-        if all(map(lambda u: colors_distance(u, color) > 20, unique_colors)):
+        if all(map(lambda u: colors_distance(u, color) > MINIMAL_RESULT_COLORS_DISTANCE, unique_colors)):
             unique_colors.append(color)
     return unique_colors
 
@@ -37,8 +45,11 @@ def get_website_colors_from_image(image: PIL.PngImagePlugin.PngImageFile) -> typ
         color = rgba[:3]
         if is_vibrant(color):
             c[color] = count
-    common_colors = [color for color, _ in c.most_common()[:5]]
+    common_colors = [color for color, _ in c.most_common()[:NUM_OF_MOST_COMMON_COLORS]]
     common_colors = remove_similar_colors(common_colors)
+    if SORT_RESULTS_BY_VIBRANTNESS:
+        # prioritize vibrante colors
+        common_colors.sort(key=rgb_vibrantness, reverse=True)
     return common_colors
 
 def get_image_from_url(url: str) -> PIL.PngImagePlugin.PngImageFile:
