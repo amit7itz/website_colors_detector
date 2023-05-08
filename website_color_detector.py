@@ -1,6 +1,5 @@
 from PIL import Image
 from collections import Counter
-import glob
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
 import io
@@ -27,7 +26,7 @@ def get_image_from_url(url: str) -> Image.Image:
     options.add_argument(f"--window-size={WINDOW_SIZE}")
     options.add_argument('--app='+url)
     with webdriver.Chrome(options=options) as driver:
-        time.sleep(PAGE_LOAD_WAIT_SECONDS) # gives the browser time to fully load the page
+        time.sleep(PAGE_LOAD_WAIT_SECONDS) # gives the browser time to load the page
         screenshot_bytes = driver.get_screenshot_as_png()
     return Image.open(io.BytesIO(screenshot_bytes))
 
@@ -53,7 +52,7 @@ def get_unique_colors(colors: typing.List[typing.Tuple[int]], minimal_distance: 
     for color in colors:
         if all(map(lambda u: colors_distance(u, color) > minimal_distance, unique_colors)):
             unique_colors.append(color)
-        if len(unique_colors) == RESULT_COLORS_COUNT:
+        if len(unique_colors) == n:
             break
     return unique_colors
 
