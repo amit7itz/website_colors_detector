@@ -1,10 +1,15 @@
+#! /usr/bin/env python3
+import sys
+import io
+import typing
+import time
+
 from PIL import Image
 from collections import Counter
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
-import io
-import typing
-import time
+from sty import bg, fg
+
 import numpy
 
 RUN_BROWSER_HEADLESS = True  # set to False to make the browser window is visible when running
@@ -23,6 +28,7 @@ def get_image_from_url(url: str) -> Image.Image:
     options = ChromeOptions()
     if RUN_BROWSER_HEADLESS:
         options.add_argument("--headless=new")
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
     options.add_argument(f"--window-size={WINDOW_SIZE}")
     options.add_argument('--app='+url)
     with webdriver.Chrome(options=options) as driver:
@@ -75,10 +81,16 @@ def get_website_colors_from_image(image: Image.Image) -> typing.List[typing.Tupl
     return common_colors[:RESULT_COLORS_COUNT]
 
 if __name__ == "__main__":
-    url = "https://www.python.org/"
-    
+    if len(sys.argv) != 2:
+        print(f'''Run with a URL or DNS address, for example:\npython {sys.argv[0]} python.org''')
+        exit(1)
+        
+    url = sys.argv[1]
+    print(f"Taking a screenshot of {url}...")
     image = get_image_from_url(url)
+    print(f"Calculating colors...")
     colors = get_website_colors_from_image(image)
 
+    print("Most common colors are:")
     for color in colors:
-        print(rgb2hex(*color), color)
+        print(f'{bg(*color)}{fg.black}{rgb2hex(*color)}  {color}{fg.rs}{bg.rs}')
