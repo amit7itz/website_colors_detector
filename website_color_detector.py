@@ -8,7 +8,7 @@ from PIL import Image
 from collections import Counter
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
-from sty import bg, fg
+from sty import bg
 
 import numpy
 
@@ -93,4 +93,4 @@ if __name__ == "__main__":
 
     print("Most common colors are:")
     for color in colors:
-        print(f'{bg(*color)}{fg.black}{rgb2hex(*color)}  {color}{fg.rs}{bg.rs}')
+        print(f' - {bg(*color)}  {bg.rs} {rgb2hex(*color)} {color}')
