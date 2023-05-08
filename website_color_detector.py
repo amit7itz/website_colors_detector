@@ -30,7 +30,7 @@ def get_image_from_url(url: str) -> Image.Image:
         options.add_argument("--headless=new")
     options.add_experimental_option('excludeSwitches', ['enable-logging'])
     options.add_argument(f"--window-size={WINDOW_SIZE}")
-    options.add_argument('--app='+url)
+    options.add_argument(f'--app={url}')
     with webdriver.Chrome(options=options) as driver:
         time.sleep(PAGE_LOAD_WAIT_SECONDS) # gives the browser time to load the page
         screenshot_bytes = driver.get_screenshot_as_png()
