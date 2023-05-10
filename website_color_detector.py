@@ -81,7 +81,7 @@ def is_vibrant(rgb: RGB) -> bool:
 
 def colors_distance(color1: RGB, color2: RGB) -> float:
     """
-    Returns the distance between the two colors as if they are points on a Three-dimensional space
+    Returns the euclidean distance between the two colors as if they are points on a three-dimensional space
     """
     p1 = numpy.array(color1)
     p2 = numpy.array(color2)
@@ -146,7 +146,7 @@ def main():  # pylint: disable=missing-function-docstring
     url = sys.argv[1]
     print(f"Taking a screenshot of {url}...")
     image = get_image_from_url(url)
-    print("Calculating colors...")
+    print("Processing colors...")
     colors = get_website_colors_from_image(image)
 
     print("Most common colors are:")
