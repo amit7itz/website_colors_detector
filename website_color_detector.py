@@ -8,12 +8,13 @@ from PIL import Image
 from collections import Counter
 from selenium import webdriver
 from selenium.webdriver import ChromeOptions
+from selenium.webdriver.support.ui import WebDriverWait
 from sty import bg
 
 import numpy
 
 RUN_BROWSER_HEADLESS = True  # set to False to make the browser window is visible when running
-PAGE_LOAD_WAIT_SECONDS = 5  # how much time to wait for the page to load
+PAGE_LOAD_TIMEOUT_SECONDS = 10  # how much time to wait for the page to load
 WINDOW_SIZE = "1366,768"
 
 MINIMAL_VIBRANTNESS = 60  # colors under this vibrantness rating will be considered gray-scaled and eliminated from results 
@@ -32,7 +33,7 @@ def get_image_from_url(url: str) -> Image.Image:
     options.add_argument(f"--window-size={WINDOW_SIZE}")
     options.add_argument(f'--app={url}')
     with webdriver.Chrome(options=options) as driver:
-        time.sleep(PAGE_LOAD_WAIT_SECONDS) # gives the browser time to load the page
+        WebDriverWait(driver, PAGE_LOAD_TIMEOUT_SECONDS).until(lambda driver: driver.execute_script('return document.readyState') == 'complete')
         screenshot_bytes = driver.get_screenshot_as_png()
     return Image.open(io.BytesIO(screenshot_bytes))
 
