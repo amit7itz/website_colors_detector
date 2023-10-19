@@ -4,6 +4,7 @@ Detects and prints the most common vibrant colors of a website
 Example:
 python website_color_detector.py https://python.org
 """
+
 import sys
 import io
 import collections
